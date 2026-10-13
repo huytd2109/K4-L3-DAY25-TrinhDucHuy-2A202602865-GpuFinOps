@@ -36,6 +36,29 @@ def dollars_per_million(total_cost_usd: float, total_tokens: int) -> float:
     return total_cost_usd / (total_tokens / 1e6)
 
 
+def cache_is_worth_it(
+    avg_cache_reads: float,
+    write_cost_per_m: float,
+    read_discount: float = 0.10,
+    price_in_per_m: float = 1.0,
+    batch: bool = False,
+    batch_discount: float = 0.50,
+) -> bool:
+    """Compare saved reads with one cache write, in USD per million prefix tokens.
+
+    Break-even reads = write_cost / (input_price * (1-read_discount) * batch_factor).
+    Writes are an additional charge and do not receive the batch discount in this
+    lab scenario. Equality is break-even, so enable cache only for a strict gain.
+    """
+    if avg_cache_reads < 0 or write_cost_per_m < 0 or price_in_per_m < 0:
+        raise ValueError("Reads and prices must be non-negative")
+    if not 0 <= read_discount <= 1 or not 0 <= batch_discount <= 1:
+        raise ValueError("Discount factors must be between zero and one")
+    batch_factor = batch_discount if batch else 1.0
+    saved_reads = avg_cache_reads * price_in_per_m * (1 - read_discount) * batch_factor
+    return avg_cache_reads > 0 and saved_reads > write_cost_per_m
+
+
 def discount_stack(
     batch: bool = False,
     cache_hit_frac: float = 0.0,

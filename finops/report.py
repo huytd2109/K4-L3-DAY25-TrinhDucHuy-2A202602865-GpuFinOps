@@ -10,9 +10,9 @@ def build_report(baseline_usd: float, optimized_usd: float, levers: dict,
     lines = [
         "# NimbusAI — GPU Cost Optimization Report",
         "",
-        f"**Period:** {period}  ",
-        f"**Baseline spend:** ${baseline_usd:,.0f}  ",
-        f"**Optimized spend:** ${optimized_usd:,.0f}  ",
+        f"**Period:** {period}\\",
+        f"**Baseline spend:** ${baseline_usd:,.0f}\\",
+        f"**Optimized spend:** ${optimized_usd:,.0f}\\",
         f"**Projected savings:** ${savings:,.0f}  (**{pct:.0f}%**)",
         "",
         "## Savings by lever",
@@ -29,7 +29,8 @@ def build_report(baseline_usd: float, optimized_usd: float, levers: dict,
             "",
             f"- Energy per query: {sustainability.get('wh_per_query', 0):.2f} Wh",
             f"- Carbon per query: {sustainability.get('carbon_g', 0):.3f} gCO2e",
-            f"- Cheapest+cleanest region: {sustainability.get('best_region', 'n/a')}",
+            f"- Cleanest region (lab carbon factors): {sustainability.get('best_region', 'n/a')}",
+            f"- Cheapest electricity region (lab prices): {sustainability.get('cheapest_region', 'n/a')}",
         ]
     lines += ["", "_Figures are June-2026 as-of snapshots; re-baseline before acting._"]
     return "\n".join(lines)
